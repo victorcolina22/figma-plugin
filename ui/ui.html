@@ -3,131 +3,410 @@
   <head>
     <meta charset="utf-8" />
     <style>
+      :root {
+        --bg: #ffffff;
+        --muted: #6b7280;
+        --text: #111827;
+        --card: #f8fafc;
+        --border: #e5e7eb;
+        --good: #16a34a;
+        --warn: #f59e0b;
+        --bad: #dc2626;
+        --accent: #2563eb;
+      }
+      * {
+        box-sizing: border-box;
+      }
       body {
+        margin: 12px;
+        background: var(--bg);
+        color: var(--text);
         font:
-          12px/1.4 -apple-system,
+          12px/1.45 -apple-system,
           BlinkMacSystemFont,
           Segoe UI,
           Roboto,
           sans-serif;
-        margin: 12px;
+      }
+      h1 {
+        font-size: 14px;
+        margin: 0 0 8px;
       }
       h2 {
-        margin: 0 0 8px;
-        font-size: 14px;
+        font-size: 12px;
+        margin: 16px 0 8px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .small {
+        color: var(--muted);
       }
       .row {
         margin: 10px 0;
       }
-      textarea {
+      .grid {
+        display: grid;
+        gap: 10px;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .grid-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+      }
+      .kpi {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .kpi .label {
+        color: var(--muted);
+      }
+      .kpi .value {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .pill {
+        display: inline-flex;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--muted);
+        font-size: 11px;
+        gap: 6px;
+        align-items: center;
+      }
+      .pill.good {
+        color: var(--good);
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+      }
+      .pill.warn {
+        color: #a16207;
+        border-color: #fde68a;
+        background: #fffbeb;
+      }
+      .pill.bad {
+        color: var(--bad);
+        border-color: #fecaca;
+        background: #fef2f2;
+      }
+
+      .controls {
+        display: grid;
+        gap: 8px;
+      }
+      select,
+      input,
+      textarea,
+      button {
         width: 100%;
+        font: inherit;
+      }
+      select,
+      input,
+      textarea {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px;
+        background: #fff;
+      }
+      textarea {
         height: 70px;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 11px;
       }
-      input,
-      select {
-        width: 100%;
-      }
       button {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 9px;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .bar {
+        height: 10px;
+        border-radius: 999px;
+        background: #e5e7eb;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+      .bar > div {
+        height: 100%;
+        background: var(--accent);
+        width: 0%;
+      }
+      .bar.dual {
+        display: flex;
+      }
+      .bar.dual > .a {
+        background: var(--accent);
+      }
+      .bar.dual > .b {
+        background: #94a3b8;
+      }
+
+      table {
         width: 100%;
+        border-collapse: collapse;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+      }
+      th,
+      td {
         padding: 8px;
-        margin-top: 8px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
       }
-      pre {
-        white-space: pre-wrap;
-        word-break: break-word;
-        background: #f6f6f6;
-        padding: 10px;
-        border-radius: 8px;
+      th {
+        text-align: left;
+        font-weight: 700;
+        color: var(--muted);
+        background: #f9fafb;
       }
-      .grid {
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .right {
+        text-align: right;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+
+      .split {
         display: grid;
-        gap: 8px;
         grid-template-columns: 1fr 1fr;
+        gap: 10px;
       }
-      .small {
-        color: #666;
+
+      .detail {
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        background: #fff;
+      }
+      .detail h3 {
+        margin: 0 0 6px;
+        font-size: 12px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+
+      .footer-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .hidden {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <h2>DS Adoption Auditor</h2>
+    <h1>DS Adoption Auditor</h1>
+    <div class="small" id="subtitle">
+      Selecciona frames/sections para auditar un flow. Si no, audita la página
+      completa.
+    </div>
 
-    <div class="row">
-      <label><b>Scope</b></label>
-      <div class="small">
-        Si tienes frames/sections seleccionados, audita esa selección. Si no,
-        audita la página completa.
+    <div class="card controls">
+      <div class="grid grid-2">
+        <div>
+          <label><b>DS detection</b></label>
+          <select id="dsMode">
+            <option value="remote">Remote components (Library) = DS</option>
+            <option value="keylist">Component keys list = DS</option>
+            <option value="nameprefix">Name prefix = DS</option>
+          </select>
+        </div>
+        <div>
+          <label
+            ><b>DS name prefix</b> <span class="small">(si aplica)</span></label
+          >
+          <input id="dsPrefix" placeholder="DS/" />
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <label><b>DS detection</b></label>
-      <select id="dsMode">
-        <option value="remote">Remote components (Library) = DS</option>
-        <option value="keylist">Component keys list = DS</option>
-        <option value="nameprefix">Name prefix = DS</option>
-      </select>
-    </div>
+      <div class="grid grid-2">
+        <div id="dsModeKeylist" class="hidden">
+          <label><b>DS component keys (1 por línea)</b></label>
+          <textarea id="dsKeys" placeholder="3c1f0b..."></textarea>
+        </div>
 
-    <div class="row" id="dsModeKeylist" style="display: none">
-      <label><b>DS component keys (1 por línea)</b></label>
-      <textarea id="dsKeys" placeholder="e.g. 3c1f0b..."></textarea>
-    </div>
-
-    <div class="row" id="dsModePrefix" style="display: none">
-      <label><b>DS name prefix</b></label>
-      <input id="dsPrefix" placeholder="e.g. DS/" />
-      <div class="small">
-        Se evalúa sobre el nombre del main component (ej. "DS/Button/Primary").
-      </div>
-    </div>
-
-    <div class="row">
-      <label><b>Token rules (prefijos de variable → categoría)</b></label>
-      <textarea
-        id="tokenRules"
-        placeholder="Color/=Color
+        <div>
+          <label
+            ><b>Token rules</b>
+            <span class="small">(prefix=Category)</span></label
+          >
+          <textarea
+            id="tokenRules"
+            placeholder="Color/=Color
 Typography/=Typography
 Radius/=Radius
 Spacing/=Spacing"
-      ></textarea>
-      <div class="small">
-        Formato: <code>prefix=Category</code>. Ej:
-        <code>Color/=Color</code> espera que variables de color empiecen con
-        "Color/".
+          ></textarea>
+        </div>
+      </div>
+
+      <button class="primary" id="run">Run audit</button>
+
+      <div class="footer-actions">
+        <button id="exportJson" disabled>Copy JSON</button>
+        <button id="exportCsv" disabled>Copy CSV</button>
       </div>
     </div>
 
-    <button id="run">Run audit</button>
-    <button id="exportJson" disabled>Export JSON</button>
-    <button id="exportCsv" disabled>Export CSV (Top lists)</button>
+    <!-- DASHBOARD -->
+    <div id="dash" class="hidden">
+      <h2>Resumen</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="kpi">
+            <div class="label">% capas que son instancias</div>
+            <div class="value" id="kpiLayersInstances">—</div>
+          </div>
+          <div class="small" id="kpiLayersInstancesNote">
+            instances / total_layers
+          </div>
+        </div>
 
-    <div class="row">
-      <label><b>Results</b></label>
-      <pre id="out">—</pre>
+        <div class="card">
+          <div class="kpi">
+            <div class="label">% instancias desde DS</div>
+            <div class="value" id="kpiDsShare">—</div>
+          </div>
+          <div class="bar dual" title="DS vs Local">
+            <div class="a" id="barDs"></div>
+            <div class="b" id="barLocal"></div>
+          </div>
+          <div class="small"><span class="mono" id="dsCounts">—</span></div>
+        </div>
+
+        <div class="card">
+          <div class="kpi">
+            <div class="label">Detached instances</div>
+            <div class="value" id="kpiDetached">—</div>
+          </div>
+          <div id="kpiDetachedPill" class="pill">—</div>
+          <div class="small">Ideal: bajo. Señal de “rompí el componente”.</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi">
+            <div class="label">Cobertura variables (nodos con binding)</div>
+            <div class="value" id="kpiVarCoverage">—</div>
+          </div>
+          <div class="bar"><div id="barVarCoverage"></div></div>
+          <div class="small" id="varCoverageCounts">—</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi">
+            <div class="label">Overrides (instancias con overrides)</div>
+            <div class="value" id="kpiOverrides">—</div>
+          </div>
+          <div id="kpiOverridesPill" class="pill">—</div>
+          <div class="small">Muchos overrides = riesgo de inconsistencias.</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi">
+            <div class="label">Pantallas/flows auditados</div>
+            <div class="value" id="kpiFlows">—</div>
+          </div>
+          <div class="small">Frames/Sections dentro del scope</div>
+        </div>
+      </div>
+
+      <h2>Top componentes</h2>
+      <div class="split">
+        <div class="card">
+          <div class="small">Ranking por <b>nombre</b></div>
+          <div id="topComponentsByName"></div>
+        </div>
+        <div class="card">
+          <div class="small">Ranking por <b>componentKey</b></div>
+          <div id="topComponentsByKey"></div>
+        </div>
+      </div>
+
+      <h2>Cobertura por pantalla / flow</h2>
+      <div class="card">
+        <div class="small">
+          Tip: ordenado por instancias totales. Click para ver detalle.
+        </div>
+        <div id="flowsTable"></div>
+        <div class="detail hidden" id="flowDetail"></div>
+      </div>
+
+      <h2>Tokens / Variables</h2>
+      <div class="split">
+        <div class="card">
+          <div class="small">Top variables (por nombre)</div>
+          <div id="topVariables"></div>
+        </div>
+        <div class="card">
+          <div class="small">Coverage por propiedad binded</div>
+          <div id="varByProperty"></div>
+        </div>
+      </div>
+
+      <h2>Calidad de uso (Overrides)</h2>
+      <div class="card">
+        <div class="small">Desglose por tipo (texto, color, layout...)</div>
+        <div id="overridesTable"></div>
+      </div>
+    </div>
+
+    <div class="card" id="statusCard" style="margin-top: 12px">
+      <div class="small" id="status">Listo para correr.</div>
     </div>
 
     <script>
-      const dsMode = document.getElementById("dsMode");
-      const dsModeKeylist = document.getElementById("dsModeKeylist");
-      const dsModePrefix = document.getElementById("dsModePrefix");
-      const dsKeys = document.getElementById("dsKeys");
-      const dsPrefix = document.getElementById("dsPrefix");
-      const tokenRules = document.getElementById("tokenRules");
-      const runBtn = document.getElementById("run");
-      const out = document.getElementById("out");
-      const exportJson = document.getElementById("exportJson");
-      const exportCsv = document.getElementById("exportCsv");
+      const $ = (id) => document.getElementById(id);
+
+      const dsMode = $("dsMode");
+      const dsModeKeylist = $("dsModeKeylist");
+      const dsKeys = $("dsKeys");
+      const dsPrefix = $("dsPrefix");
+      const tokenRules = $("tokenRules");
+
+      const runBtn = $("run");
+      const exportJson = $("exportJson");
+      const exportCsv = $("exportCsv");
+
+      const dash = $("dash");
+      const status = $("status");
 
       let lastPayload = null;
 
       function toggleDsInputs() {
-        dsModeKeylist.style.display =
-          dsMode.value === "keylist" ? "block" : "none";
-        dsModePrefix.style.display =
-          dsMode.value === "nameprefix" ? "block" : "none";
+        dsModeKeylist.classList.toggle("hidden", dsMode.value !== "keylist");
       }
       dsMode.addEventListener("change", toggleDsInputs);
       toggleDsInputs();
@@ -146,10 +425,16 @@ Spacing/=Spacing"
           })
           .filter((r) => r.prefix && r.category);
 
-        const keys = dsKeys.value
+        const keys = (dsKeys?.value || "")
           .split("\n")
           .map((x) => x.trim())
           .filter(Boolean);
+
+        status.textContent = "Corriendo auditoría…";
+        dash.classList.add("hidden");
+
+        exportJson.disabled = true;
+        exportCsv.disabled = true;
 
         parent.postMessage(
           {
@@ -165,9 +450,6 @@ Spacing/=Spacing"
           },
           "*",
         );
-        out.textContent = "Running…";
-        exportJson.disabled = true;
-        exportCsv.disabled = true;
       };
 
       exportJson.onclick = () => {
@@ -186,21 +468,324 @@ Spacing/=Spacing"
         );
       };
 
+      function pct(v) {
+        if (Number.isFinite(v)) return v.toFixed(1) + "%";
+        return "—";
+      }
+      function num(v) {
+        return Number.isFinite(v) ? String(v) : "—";
+      }
+
+      function pill(el, level, text) {
+        el.className = "pill " + (level || "");
+        el.textContent = text;
+      }
+
+      function table(rows, cols) {
+        const t = document.createElement("table");
+        const thead = document.createElement("thead");
+        const trh = document.createElement("tr");
+        for (const c of cols) {
+          const th = document.createElement("th");
+          th.textContent = c.label;
+          if (c.right) th.classList.add("right");
+          trh.appendChild(th);
+        }
+        thead.appendChild(trh);
+        t.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        for (const r of rows) {
+          const tr = document.createElement("tr");
+          for (const c of cols) {
+            const td = document.createElement("td");
+            const v = r[c.key];
+            if (c.render) td.appendChild(c.render(v, r));
+            else td.textContent = v == null ? "" : String(v);
+            if (c.right) td.classList.add("right");
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+        }
+        t.appendChild(tbody);
+        return t;
+      }
+
+      function renderTopList(containerId, items, labelKey = "name") {
+        const wrap = $(containerId);
+        wrap.innerHTML = "";
+        if (!items || items.length === 0) {
+          wrap.textContent = "—";
+          return;
+        }
+        const rows = items.map((it, idx) => ({
+          rank: idx + 1,
+          label: it[labelKey],
+          count: it.count,
+        }));
+        wrap.appendChild(
+          table(rows, [
+            { key: "rank", label: "#", right: true },
+            { key: "label", label: "Item" },
+            { key: "count", label: "Uso", right: true },
+          ]),
+        );
+      }
+
+      function renderFlows(payload) {
+        const flows = payload.summary.flows || [];
+        const wrap = $("flowsTable");
+        wrap.innerHTML = "";
+
+        const rows = flows.map((f) => {
+          const dsPct =
+            f.instances > 0 ? (f.dsInstances / f.instances) * 100 : 0;
+          const detPct = f.instances > 0 ? (f.detached / f.instances) * 100 : 0;
+          const instLayerPct =
+            f.totalLayers > 0 ? (f.instances / f.totalLayers) * 100 : 0;
+
+          return {
+            flowId: f.flowId,
+            name: f.flowName,
+            type: f.flowType,
+            instances: f.instances,
+            instLayerPct: instLayerPct.toFixed(1) + "%",
+            dsPct: dsPct.toFixed(1) + "%",
+            detPct: detPct.toFixed(1) + "%",
+          };
+        });
+
+        const t = table(rows, [
+          {
+            key: "name",
+            label: "Pantalla / Flow",
+            render: (v, r) => {
+              const a = document.createElement("a");
+              a.href = "#";
+              a.textContent = v;
+              a.onclick = (e) => {
+                e.preventDefault();
+                showFlowDetail(payload, r.flowId);
+              };
+              const div = document.createElement("div");
+              div.appendChild(a);
+              const sm = document.createElement("div");
+              sm.className = "small";
+              sm.textContent = r.type;
+              div.appendChild(sm);
+              return div;
+            },
+          },
+          { key: "instances", label: "Instancias", right: true },
+          { key: "instLayerPct", label: "% instancias/capas", right: true },
+          { key: "dsPct", label: "% DS", right: true },
+          { key: "detPct", label: "% Detached", right: true },
+        ]);
+        wrap.appendChild(t);
+      }
+
+      function showFlowDetail(payload, flowId) {
+        const flows = payload.summary.flows || [];
+        const f = flows.find((x) => x.flowId === flowId);
+        const d = $("flowDetail");
+        if (!f) {
+          d.classList.add("hidden");
+          return;
+        }
+
+        const dsPct = f.instances > 0 ? (f.dsInstances / f.instances) * 100 : 0;
+        const detPct = f.instances > 0 ? (f.detached / f.instances) * 100 : 0;
+
+        d.classList.remove("hidden");
+        d.innerHTML = "";
+
+        const title = document.createElement("h3");
+        title.textContent = f.flowName;
+        d.appendChild(title);
+
+        const meta = document.createElement("div");
+        meta.className = "muted";
+        meta.textContent = `Tipo: ${f.flowType}`;
+        d.appendChild(meta);
+
+        const grid = document.createElement("div");
+        grid.className = "grid grid-3";
+        grid.style.marginTop = "10px";
+
+        function mini(label, value) {
+          const c = document.createElement("div");
+          c.className = "card";
+          c.style.padding = "8px";
+          const a = document.createElement("div");
+          a.className = "small";
+          a.textContent = label;
+          const b = document.createElement("div");
+          b.style.fontSize = "14px";
+          b.style.fontWeight = "700";
+          b.textContent = value;
+          c.appendChild(a);
+          c.appendChild(b);
+          return c;
+        }
+
+        grid.appendChild(mini("Instancias", num(f.instances)));
+        grid.appendChild(mini("% DS", dsPct.toFixed(1) + "%"));
+        grid.appendChild(mini("% Detached", detPct.toFixed(1) + "%"));
+        d.appendChild(grid);
+
+        const hint = document.createElement("div");
+        hint.className = "small";
+        hint.style.marginTop = "8px";
+        hint.textContent =
+          "Lectura rápida: si %Detached es alto → se están rompiendo componentes. Si %DS es bajo → se están usando componentes locales.";
+        d.appendChild(hint);
+      }
+
+      function renderVarByProperty(payload) {
+        const by = payload.summary.variables.byProperty || {};
+        const rows = Object.entries(by)
+          .map(([prop, v]) => {
+            const pct =
+              v.totalNodes > 0 ? (v.boundNodes / v.totalNodes) * 100 : 0;
+            return {
+              prop,
+              pct: pct.toFixed(1) + "%",
+              bound: v.boundNodes,
+              total: v.totalNodes,
+            };
+          })
+          .sort((a, b) => parseFloat(b.pct) - parseFloat(a.pct));
+
+        const wrap = $("varByProperty");
+        wrap.innerHTML = "";
+        if (rows.length === 0) {
+          wrap.textContent = "—";
+          return;
+        }
+
+        wrap.appendChild(
+          table(rows.slice(0, 12), [
+            { key: "prop", label: "Propiedad" },
+            { key: "pct", label: "% binded", right: true },
+            { key: "bound", label: "Binded", right: true },
+            { key: "total", label: "Total", right: true },
+          ]),
+        );
+      }
+
+      function renderOverrides(payload) {
+        const ov = payload.summary.overrides || {};
+        const byType = ov.byType || {};
+        const rows = Object.entries(byType)
+          .map(([type, count]) => ({ type, count }))
+          .sort((a, b) => b.count - a.count);
+
+        const wrap = $("overridesTable");
+        wrap.innerHTML = "";
+        if (rows.length === 0) {
+          wrap.textContent = "—";
+          return;
+        }
+
+        wrap.appendChild(
+          table(rows, [
+            { key: "type", label: "Tipo de override" },
+            { key: "count", label: "Cantidad", right: true },
+          ]),
+        );
+      }
+
+      function scorePillDetached(detachedPct) {
+        if (detachedPct <= 2) return ["good", "Saludable"];
+        if (detachedPct <= 8) return ["warn", "Revisar"];
+        return ["bad", "Alto riesgo"];
+      }
+
+      function scorePillOverrides(instancesWithOverridesPct) {
+        if (instancesWithOverridesPct <= 20) return ["good", "Controlado"];
+        if (instancesWithOverridesPct <= 45) return ["warn", "Elevado"];
+        return ["bad", "Muy alto"];
+      }
+
+      function renderDashboard(payload) {
+        lastPayload = payload;
+        exportJson.disabled = false;
+        exportCsv.disabled = false;
+
+        const s = payload.summary;
+
+        // KPI cards
+        $("kpiLayersInstances").textContent = pct(s.percentLayersInstances);
+        $("kpiDsShare").textContent = pct(s.percentInstancesFromDs);
+        $("dsCounts").textContent =
+          `${s.dsInstances} DS / ${s.localInstances} local`;
+
+        const detPct = s.percentDetached;
+        $("kpiDetached").textContent =
+          `${s.detachedInstances} (${pct(detPct)})`;
+        const [dl, dt] = scorePillDetached(detPct);
+        pill($("kpiDetachedPill"), dl, dt);
+
+        const varCov =
+          s.variables.totalNodesChecked > 0
+            ? (s.variables.nodesWithAnyBinding /
+                s.variables.totalNodesChecked) *
+              100
+            : 0;
+        $("kpiVarCoverage").textContent = pct(varCov);
+        $("varCoverageCounts").textContent =
+          `${s.variables.nodesWithAnyBinding} / ${s.variables.totalNodesChecked} nodos`;
+
+        const ovc = s.overrides.totalInstancesWithOverrides || 0;
+        const ovPct = s.totalInstances > 0 ? (ovc / s.totalInstances) * 100 : 0;
+        $("kpiOverrides").textContent = `${ovc} (${pct(ovPct)})`;
+        const [ol, ot] = scorePillOverrides(ovPct);
+        pill($("kpiOverridesPill"), ol, ot);
+
+        $("kpiFlows").textContent = num((s.flows || []).length);
+
+        // bars
+        const dsWidth = Math.max(0, Math.min(100, s.percentInstancesFromDs));
+        $("barDs").style.width = dsWidth + "%";
+        $("barLocal").style.width = 100 - dsWidth + "%";
+
+        $("barVarCoverage").style.width =
+          Math.max(0, Math.min(100, varCov)) + "%";
+
+        // top lists
+        renderTopList("topComponentsByName", s.topComponentsByName, "name");
+        renderTopList("topComponentsByKey", s.topComponentsByKey, "id");
+        renderTopList("topVariables", s.variables.topVariables, "name");
+
+        // flows + detail
+        renderFlows(payload);
+        $("flowDetail").classList.add("hidden");
+
+        // vars by property
+        renderVarByProperty(payload);
+
+        // overrides
+        renderOverrides(payload);
+
+        dash.classList.remove("hidden");
+        status.textContent = `OK — scope: ${payload.scope}. Generado: ${new Date(payload.generatedAt).toLocaleString()}`;
+      }
+
       onmessage = (event) => {
         const msg = event.data.pluginMessage;
         if (!msg) return;
 
         if (msg.type === "RESULT") {
-          lastPayload = msg.payload;
-          out.textContent = JSON.stringify(msg.payload.summary, null, 2);
-          exportJson.disabled = false;
-          exportCsv.disabled = false;
+          renderDashboard(msg.payload);
+          return;
         }
 
         if (msg.type === "ERROR") {
-          out.textContent = msg.message || "Error";
+          status.textContent = msg.message || "Error";
           exportJson.disabled = true;
           exportCsv.disabled = true;
+          dash.classList.add("hidden");
+          return;
         }
       };
     </script>

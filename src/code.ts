@@ -81,10 +81,21 @@ figma.ui.onmessage = async (msg: any) => {
   try {
     if (msg.type === "RUN") {
       const settings: Settings = msg.settings;
+      figma.root.setPluginData(
+        "tokenRules",
+        JSON.stringify(settings.tokenRules ?? []),
+      );
       const payload = await runAudit(settings);
       figma.ui.postMessage({ type: "RESULT", payload });
       return;
     }
+
+    // if (msg.type === "RUN") {
+    //   const settings: Settings = msg.settings;
+    //   const payload = await runAudit(settings);
+    //   figma.ui.postMessage({ type: "RESULT", payload });
+    //   return;
+    // }
 
     if (msg.type === "EXPORT_JSON") {
       const json = JSON.stringify(msg.payload, null, 2);
@@ -589,12 +600,23 @@ figma.ui.onmessage = async (msg: any) => {
   try {
     if (msg.type === "RUN") {
       const settings: Settings = msg.settings;
-      await setTokenRulesToPluginData(settings.tokenRules);
-
+      figma.root.setPluginData(
+        "tokenRules",
+        JSON.stringify(settings.tokenRules ?? []),
+      );
       const payload = await runAudit(settings);
       figma.ui.postMessage({ type: "RESULT", payload });
       return;
     }
+
+    // if (msg.type === "RUN") {
+    //   const settings: Settings = msg.settings;
+    //   await setTokenRulesToPluginData(settings.tokenRules);
+    //
+    //   const payload = await runAudit(settings);
+    //   figma.ui.postMessage({ type: "RESULT", payload });
+    //   return;
+    // }
 
     if (msg.type === "EXPORT_JSON") {
       const json = JSON.stringify(msg.payload, null, 2);
