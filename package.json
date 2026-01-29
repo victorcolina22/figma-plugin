@@ -1,0 +1,14 @@
+{
+  "name": "ds-adoption-auditor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es2018",
+    "watch": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es2018 --watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.100.0",
+    "esbuild": "^0.20.2",
+    "typescript": "^5.4.0"
+  }
+}

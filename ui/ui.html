@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font:
+          12px/1.4 -apple-system,
+          BlinkMacSystemFont,
+          Segoe UI,
+          Roboto,
+          sans-serif;
+        margin: 12px;
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 14px;
+      }
+      .row {
+        margin: 10px 0;
+      }
+      textarea {
+        width: 100%;
+        height: 70px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11px;
+      }
+      input,
+      select {
+        width: 100%;
+      }
+      button {
+        width: 100%;
+        padding: 8px;
+        margin-top: 8px;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: #f6f6f6;
+        padding: 10px;
+        border-radius: 8px;
+      }
+      .grid {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 1fr 1fr;
+      }
+      .small {
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>DS Adoption Auditor</h2>
+
+    <div class="row">
+      <label><b>Scope</b></label>
+      <div class="small">
+        Si tienes frames/sections seleccionados, audita esa selección. Si no,
+        audita la página completa.
+      </div>
+    </div>
+
+    <div class="row">
+      <label><b>DS detection</b></label>
+      <select id="dsMode">
+        <option value="remote">Remote components (Library) = DS</option>
+        <option value="keylist">Component keys list = DS</option>
+        <option value="nameprefix">Name prefix = DS</option>
+      </select>
+    </div>
+
+    <div class="row" id="dsModeKeylist" style="display: none">
+      <label><b>DS component keys (1 por línea)</b></label>
+      <textarea id="dsKeys" placeholder="e.g. 3c1f0b..."></textarea>
+    </div>
+
+    <div class="row" id="dsModePrefix" style="display: none">
+      <label><b>DS name prefix</b></label>
+      <input id="dsPrefix" placeholder="e.g. DS/" />
+      <div class="small">
+        Se evalúa sobre el nombre del main component (ej. "DS/Button/Primary").
+      </div>
+    </div>
+
+    <div class="row">
+      <label><b>Token rules (prefijos de variable → categoría)</b></label>
+      <textarea
+        id="tokenRules"
+        placeholder="Color/=Color
+Typography/=Typography
+Radius/=Radius
+Spacing/=Spacing"
+      ></textarea>
+      <div class="small">
+        Formato: <code>prefix=Category</code>. Ej:
+        <code>Color/=Color</code> espera que variables de color empiecen con
+        "Color/".
+      </div>
+    </div>
+
+    <button id="run">Run audit</button>
+    <button id="exportJson" disabled>Export JSON</button>
+    <button id="exportCsv" disabled>Export CSV (Top lists)</button>
+
+    <div class="row">
+      <label><b>Results</b></label>
+      <pre id="out">—</pre>
+    </div>
+
+    <script>
+      const dsMode = document.getElementById("dsMode");
+      const dsModeKeylist = document.getElementById("dsModeKeylist");
+      const dsModePrefix = document.getElementById("dsModePrefix");
+      const dsKeys = document.getElementById("dsKeys");
+      const dsPrefix = document.getElementById("dsPrefix");
+      const tokenRules = document.getElementById("tokenRules");
+      const runBtn = document.getElementById("run");
+      const out = document.getElementById("out");
+      const exportJson = document.getElementById("exportJson");
+      const exportCsv = document.getElementById("exportCsv");
+
+      let lastPayload = null;
+
+      function toggleDsInputs() {
+        dsModeKeylist.style.display =
+          dsMode.value === "keylist" ? "block" : "none";
+        dsModePrefix.style.display =
+          dsMode.value === "nameprefix" ? "block" : "none";
+      }
+      dsMode.addEventListener("change", toggleDsInputs);
+      toggleDsInputs();
+
+      runBtn.onclick = () => {
+        const rules = tokenRules.value
+          .split("\n")
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .map((l) => {
+            const [prefix, category] = l.split("=");
+            return {
+              prefix: (prefix || "").trim(),
+              category: (category || "").trim(),
+            };
+          })
+          .filter((r) => r.prefix && r.category);
+
+        const keys = dsKeys.value
+          .split("\n")
+          .map((x) => x.trim())
+          .filter(Boolean);
+
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "RUN",
+              settings: {
+                dsMode: dsMode.value,
+                dsKeys: keys,
+                dsPrefix: dsPrefix.value || "DS/",
+                tokenRules: rules,
+              },
+            },
+          },
+          "*",
+        );
+        out.textContent = "Running…";
+        exportJson.disabled = true;
+        exportCsv.disabled = true;
+      };
+
+      exportJson.onclick = () => {
+        if (!lastPayload) return;
+        parent.postMessage(
+          { pluginMessage: { type: "EXPORT_JSON", payload: lastPayload } },
+          "*",
+        );
+      };
+
+      exportCsv.onclick = () => {
+        if (!lastPayload) return;
+        parent.postMessage(
+          { pluginMessage: { type: "EXPORT_CSV", payload: lastPayload } },
+          "*",
+        );
+      };
+
+      onmessage = (event) => {
+        const msg = event.data.pluginMessage;
+        if (!msg) return;
+
+        if (msg.type === "RESULT") {
+          lastPayload = msg.payload;
+          out.textContent = JSON.stringify(msg.payload.summary, null, 2);
+          exportJson.disabled = false;
+          exportCsv.disabled = false;
+        }
+
+        if (msg.type === "ERROR") {
+          out.textContent = msg.message || "Error";
+          exportJson.disabled = true;
+          exportCsv.disabled = true;
+        }
+      };
+    </script>
+  </body>
+</html>
